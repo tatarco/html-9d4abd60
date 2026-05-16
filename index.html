@@ -3,291 +3,423 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Humondial 2026 — Redesign Mockup</title>
+  <title>Humondial 2026 — v2</title>
   <style>
     :root {
-      --bg: #050505;
-      --bg2: #120607;
-      --bg3: #230B0D;
-      --card-bg: rgba(32, 8, 9, 0.88);
       --red: #D63A36;
-      --red-glow: rgba(214, 58, 54, 0.35);
+      --red-glow: rgba(214,58,54,0.4);
       --gold: #F4C15D;
-      --gold-dim: rgba(244, 193, 93, 0.55);
+      --gold-dim: rgba(244,193,93,0.55);
       --green: #35D26F;
       --text: #F8F3EA;
       --text-sec: #9D8585;
-      --border: rgba(214, 58, 54, 0.3);
-      --card-radius: 24px;
+      --border: rgba(214,58,54,0.28);
+      --card-bg: rgba(28, 6, 6, 0.88);
+      --card-radius: 22px;
       --btn-radius: 18px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html, body { min-height: 100%; }
 
     body {
-      background: linear-gradient(160deg, #050505 0%, #120607 25%, #230B0D 55%, #07111F 100%);
-      min-height: 100vh;
+      background: #060202;
       color: var(--text);
       font-family: -apple-system, 'Segoe UI', sans-serif;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* Stadium ambient lights */
-    body::before {
+    /* ═══ STADIUM ATMOSPHERE BACKGROUND ═══ */
+    .stadium-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      overflow: hidden;
+    }
+    /* Dark crowd base */
+    .stadium-bg::before {
       content: '';
-      position: fixed; inset: 0;
+      position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 70% 35% at 15% 8%, rgba(214,58,54,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 25% at 85% 5%, rgba(244,193,93,0.05) 0%, transparent 65%),
-        radial-gradient(ellipse 80% 30% at 50% 0%, rgba(16,35,63,0.35) 0%, transparent 75%);
-      pointer-events: none; z-index: 0;
+        /* Stadium ceiling lights — warm white beams from top */
+        radial-gradient(ellipse 35% 55% at 50% -5%, rgba(255,235,160,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 20% 40% at 20% 0%, rgba(255,220,120,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse 20% 40% at 80% 0%, rgba(255,220,120,0.10) 0%, transparent 50%),
+        /* Deep blue sky at very top */
+        radial-gradient(ellipse 100% 20% at 50% 0%, rgba(16,35,63,0.5) 0%, transparent 100%),
+        /* Crowd glow — red/warm from stands */
+        radial-gradient(ellipse 80% 25% at 50% 85%, rgba(180,40,30,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 20% at 20% 75%, rgba(160,30,20,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 20% at 80% 75%, rgba(160,30,20,0.15) 0%, transparent 60%),
+        /* Base dark gradient */
+        linear-gradient(180deg, #0a0303 0%, #150606 20%, #200808 50%, #0d0204 100%);
+    }
+    /* Crowd silhouette — dark mass at bottom using stacked ellipses */
+    .stadium-bg::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+      background:
+        radial-gradient(ellipse 120% 40% at 50% 100%, rgba(5,1,1,0.9) 0%, transparent 80%),
+        radial-gradient(ellipse 80% 30% at 30% 100%, rgba(8,2,2,0.7) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 30% at 70% 100%, rgba(8,2,2,0.7) 0%, transparent 70%);
+    }
+
+    /* Confetti layer */
+    .confetti-layer {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 7px; height: 14px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confetti-fall linear infinite;
+    }
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0.9; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
     .page {
       max-width: 420px; margin: 0 auto;
-      padding: 0 16px 80px;
-      position: relative; z-index: 1;
+      padding: 0 14px 80px;
+      position: relative; z-index: 2;
     }
 
-    /* ── SCREENS ── */
+    /* ═══ SCREENS ═══ */
     .screen { display: none; }
     .screen.active { display: block; }
 
-    /* ── TOP BAR ── */
+    /* ═══ TOP BAR ═══ */
     .topbar {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 18px 0 14px;
+      padding: 14px 0 10px;
     }
-    .logo-wrap { display: flex; flex-direction: column; }
-    .logo {
-      font-size: 22px; font-weight: 900; letter-spacing: 1.5px;
-      background: linear-gradient(135deg, #F8F3EA 55%, #F4C15D 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .topbar-btn {
+      background: rgba(28,6,6,0.7);
+      border: 1px solid var(--border);
+      color: var(--text); padding: 7px 14px;
+      border-radius: 10px; font-size: 13px;
+      font-weight: 600; cursor: pointer;
     }
-    .logo-sub { font-size: 9px; font-weight: 600; color: var(--text-sec); letter-spacing: 3px; text-transform: uppercase; margin-top: 1px; }
-    .topbar-icon-btn {
-      width: 38px; height: 38px;
-      background: var(--card-bg); border: 1px solid var(--border);
+    .logo-center { text-align: center; }
+    .logo-main {
+      font-size: 26px; font-weight: 900;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .logo-main .hum { color: var(--text); }
+    .logo-main .mon { color: var(--red); text-shadow: 0 0 12px rgba(214,58,54,0.6); }
+    .logo-main .dial { color: var(--text); }
+    .logo-year {
+      font-size: 13px; font-weight: 700;
+      color: var(--gold); letter-spacing: 3px;
+      margin-top: 1px;
+    }
+    .topbar-icon {
+      width: 36px; height: 36px;
+      background: rgba(28,6,6,0.7);
+      border: 1px solid var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; cursor: pointer;
     }
 
-    /* ── HERO CARD ── */
+    /* ═══ HERO CARD ═══ */
     .hero-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      background: linear-gradient(160deg, rgba(35,10,10,0.95) 0%, rgba(18,4,4,0.98) 100%);
+      border: 1px solid rgba(244,193,93,0.4);
       border-radius: var(--card-radius);
-      padding: 20px;
+      padding: 20px 18px;
       margin-bottom: 12px;
       position: relative; overflow: hidden;
-      box-shadow: 0 0 40px var(--red-glow), 0 4px 24px rgba(0,0,0,0.6);
+      box-shadow:
+        0 0 40px rgba(244,193,93,0.12),
+        0 0 80px rgba(214,58,54,0.15),
+        inset 0 0 40px rgba(16,35,63,0.2);
     }
     .hero-card::before {
       content: '';
-      position: absolute; top: -40%; right: -15%;
-      width: 220px; height: 220px;
-      background: radial-gradient(ellipse, rgba(244,193,93,0.07) 0%, transparent 70%);
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(244,193,93,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 20% 80%, rgba(214,58,54,0.06) 0%, transparent 60%);
       pointer-events: none;
     }
+    /* Light ray from top */
     .hero-card::after {
       content: '';
-      position: absolute; bottom: -20%; left: -10%;
-      width: 180px; height: 180px;
-      background: radial-gradient(ellipse, rgba(214,58,54,0.06) 0%, transparent 70%);
-      pointer-events: none;
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(244,193,93,0.5), rgba(214,58,54,0.5), transparent);
     }
-    .hero-top {
+
+    .hero-top-row {
       display: flex; align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       position: relative; z-index: 1;
     }
-    .hero-greeting { font-size: 12px; color: var(--text-sec); margin-bottom: 4px; }
-    .hero-points {
-      font-size: 48px; font-weight: 900; color: var(--gold);
-      line-height: 1; letter-spacing: -2px;
+    .hero-tagline {
+      font-size: 16px; font-weight: 800;
+      color: var(--text); line-height: 1.35;
+      max-width: 240px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
     }
-    .hero-points-label { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
-    .tier-badge-hero {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(244,193,93,0.1);
-      border: 1px solid var(--gold-dim);
-      border-radius: 20px;
-      padding: 7px 13px;
-      font-size: 13px; font-weight: 700;
-      color: var(--gold);
-      cursor: pointer;
+    .hero-trophy {
+      font-size: 64px; line-height: 1;
+      filter: drop-shadow(0 0 16px rgba(244,193,93,0.6));
+      flex-shrink: 0; margin-right: -4px; margin-top: -4px;
     }
-    .hero-progress { margin-bottom: 16px; position: relative; z-index: 1; }
-    .hero-progress-labels {
+
+    .hero-points-block {
+      margin-bottom: 14px;
+      position: relative; z-index: 1;
+    }
+    .hero-points-num {
+      font-size: 56px; font-weight: 900;
+      color: var(--text); line-height: 1;
+      letter-spacing: -2px;
+      text-shadow: 0 0 30px rgba(255,255,255,0.15);
+    }
+    .hero-points-num span { color: var(--gold); }
+    .hero-points-sub { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+
+    .hero-tier-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px; position: relative; z-index: 1;
+    }
+    .tier-medal-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #cd7f32, #8b5010);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(205,127,50,0.4);
+    }
+    .tier-bar-wrap { flex: 1; }
+    .tier-bar-label {
       display: flex; justify-content: space-between;
-      font-size: 11px; color: var(--text-sec); margin-bottom: 6px;
+      font-size: 11px; margin-bottom: 5px;
     }
-    .hero-bar-bg {
+    .tier-bar-label-title { font-weight: 700; color: var(--gold); }
+    .tier-bar-label-pct { color: var(--text-sec); }
+    .tier-bar-bg {
       background: rgba(255,255,255,0.08);
-      border-radius: 6px; height: 8px; overflow: hidden;
+      border-radius: 8px; height: 10px;
+      overflow: visible; position: relative;
     }
-    .hero-bar {
-      background: linear-gradient(90deg, var(--red) 0%, #E05555 70%, #c8973a 100%);
-      height: 8px; border-radius: 6px; width: 39%;
-      position: relative;
+    .tier-bar-fill {
+      background: linear-gradient(90deg, #8b5010, #cd7f32, var(--gold));
+      height: 10px; border-radius: 8px; width: 85%;
+      position: relative; overflow: hidden;
     }
-    .hero-bar::after {
+    .tier-bar-fill::after {
       content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: rgba(255,255,255,0.25); border-radius: 6px;
+      top: 1px; left: 0; right: 0; height: 3px;
+      background: rgba(255,255,255,0.2); border-radius: 4px;
     }
-    .hero-ctas { display: flex; gap: 10px; position: relative; z-index: 1; }
-    .btn-primary {
+    .tier-bar-ball {
+      position: absolute; top: 50%; right: 0;
+      transform: translate(50%, -50%);
+      font-size: 16px; line-height: 1;
+    }
+    .tier-bar-sub { font-size: 10px; color: var(--text-sec); margin-top: 3px; }
+
+    /* Snapshot */
+    .snapshot-block {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px; padding: 10px 12px;
+      margin-bottom: 14px; position: relative; z-index: 1;
+    }
+    .snapshot-title { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 8px; letter-spacing: 0.5px; }
+    .snapshot-row { font-size: 12px; color: var(--text); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+    .snapshot-row:last-child { margin-bottom: 0; }
+
+    .hero-ctas {
+      display: flex; gap: 10px; position: relative; z-index: 1;
+    }
+    .btn-red {
       flex: 1; padding: 13px;
       background: var(--red); border: none;
       border-radius: var(--btn-radius);
       color: #fff; font-size: 14px; font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(214,58,54,0.45);
-      letter-spacing: 0.3px;
+      box-shadow: 0 4px 20px rgba(214,58,54,0.5);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .btn-secondary {
+    .btn-gold {
       flex: 1; padding: 13px;
       background: transparent;
       border: 1px solid var(--gold-dim);
       border-radius: var(--btn-radius);
       color: var(--gold); font-size: 14px; font-weight: 700;
       cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
-    /* ── QUICK ACTIONS ── */
-    .quick-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+    /* ═══ QUICK ACTIONS ═══ */
+    .quick-actions { display: flex; gap: 8px; margin-bottom: 12px; }
     .qa-tile {
-      flex: 1; background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px 8px;
+      flex: 1;
+      border-radius: 16px; padding: 12px 8px;
       display: flex; flex-direction: column;
-      align-items: center; gap: 5px;
-      cursor: pointer; transition: border-color 0.2s;
+      align-items: center; gap: 4px;
+      cursor: pointer; border: 1px solid transparent;
     }
-    .qa-tile:active { border-color: var(--red); }
-    .qa-icon { font-size: 24px; }
+    .qa-tile.qa-red {
+      background: rgba(214,58,54,0.2);
+      border-color: rgba(214,58,54,0.4);
+    }
+    .qa-tile.qa-gold {
+      background: rgba(244,193,93,0.12);
+      border-color: rgba(244,193,93,0.35);
+    }
+    .qa-tile.qa-dark {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .qa-icon { font-size: 22px; }
     .qa-label { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; }
-    .qa-sub { font-size: 10px; color: var(--text-sec); text-align: center; }
+    .qa-pts { font-size: 10px; font-weight: 600; }
+    .qa-tile.qa-red .qa-pts { color: var(--red); }
+    .qa-tile.qa-gold .qa-pts { color: var(--gold); }
+    .qa-tile.qa-dark .qa-pts { color: var(--text-sec); }
 
-    /* ── SECTION LABEL ── */
+    /* ═══ TODAY STATUS ═══ */
+    .today-status {
+      display: flex; gap: 6px; margin-bottom: 14px;
+      overflow-x: auto; padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .today-status::-webkit-scrollbar { display: none; }
+    .status-chip {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(28,6,6,0.8);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 5px 12px;
+      font-size: 11px; font-weight: 600; color: var(--text);
+      white-space: nowrap;
+    }
+    .status-chip .chip-val { color: var(--gold); font-weight: 800; }
+
+    /* ═══ SECTION LABEL ═══ */
     .section-label {
+      display: flex; align-items: center;
+      justify-content: space-between;
       font-size: 10px; font-weight: 700;
       color: var(--text-sec); text-transform: uppercase;
       letter-spacing: 2px; margin-bottom: 10px;
     }
+    .section-label-en { color: rgba(255,255,255,0.25); font-size: 9px; font-weight: 500; letter-spacing: 1px; }
 
-    /* ── STAGE FILTER ── */
+    /* ═══ STAGE FILTER ═══ */
     .stage-filter {
-      display: flex; gap: 8px; margin-bottom: 16px;
+      display: flex; gap: 7px; margin-bottom: 12px;
       overflow-x: auto; padding-bottom: 2px;
       scrollbar-width: none;
     }
     .stage-filter::-webkit-scrollbar { display: none; }
     .stage-chip {
-      padding: 7px 15px; border-radius: 20px;
+      padding: 7px 14px; border-radius: 20px;
       font-size: 12px; font-weight: 600;
       white-space: nowrap; cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s;
+      border: 1px solid transparent; transition: all 0.15s;
     }
     .stage-chip.active {
-      background: var(--red); color: #fff;
-      box-shadow: 0 2px 14px rgba(214,58,54,0.4);
+      background: var(--text); color: #000;
     }
     .stage-chip:not(.active) {
-      background: var(--card-bg);
-      border-color: var(--border);
+      background: rgba(28,6,6,0.7);
+      border-color: rgba(255,255,255,0.12);
       color: var(--text-sec);
     }
 
-    /* ── MATCH CARD ── */
+    /* ═══ MATCH CARD ═══ */
     .match-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--card-radius);
-      padding: 16px; margin-bottom: 10px;
+      padding: 14px; margin-bottom: 10px;
       position: relative; overflow: hidden;
     }
     .match-card.featured {
-      border-color: rgba(244,193,93,0.45);
-      box-shadow: 0 0 24px rgba(244,193,93,0.08);
+      border-color: rgba(244,193,93,0.5);
+      box-shadow: 0 0 24px rgba(244,193,93,0.1);
     }
-    .featured-badge {
-      position: absolute; top: 0; left: 0;
-      background: linear-gradient(135deg, var(--gold), #d4930a);
+    .featured-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: linear-gradient(135deg, var(--gold), #d49010);
       color: #000; font-size: 10px; font-weight: 800;
-      padding: 5px 12px;
-      border-radius: 0 0 14px 0;
+      padding: 4px 10px; border-radius: 8px;
+      margin-bottom: 10px;
     }
-    .match-meta {
+    .match-header {
       display: flex; align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
     }
+    .match-header-left { display: flex; flex-direction: column; gap: 2px; }
     .match-group { font-size: 11px; color: var(--text-sec); }
-    .match-time { font-size: 11px; color: var(--text-sec); }
-    .status-chip {
+    .match-datetime { font-size: 11px; color: var(--text-sec); }
+    .match-lock { font-size: 10px; color: var(--text-sec); opacity: 0.7; }
+    .status-chip-small {
       font-size: 10px; font-weight: 700;
       padding: 3px 9px; border-radius: 10px;
     }
     .open { background: rgba(53,210,111,0.14); color: var(--green); }
     .locked { background: rgba(157,133,133,0.15); color: var(--text-sec); }
-    .live { background: rgba(214,58,54,0.18); color: var(--red); }
 
-    .match-teams {
+    .match-teams-row {
       display: flex; align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px; gap: 4px;
     }
-    .team {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 5px; flex: 1;
+    .team-side {
+      display: flex; align-items: center; gap: 8px;
+      flex: 1;
     }
-    .team-flag { font-size: 34px; }
-    .team-name { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; }
-    .match-vs { font-size: 16px; font-weight: 900; color: var(--text-sec); padding: 0 8px; }
+    .team-side.away { flex-direction: row-reverse; }
+    .team-flag { font-size: 30px; }
+    .team-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .vs-divider { font-size: 13px; color: var(--text-sec); font-weight: 700; padding: 0 4px; }
 
-    .match-footer {
-      display: flex; align-items: center;
-      justify-content: space-between;
+    /* 1/X/2 prediction buttons */
+    .score-btns {
+      display: flex; gap: 8px; margin-bottom: 10px;
     }
-    .pts-badge {
-      display: flex; align-items: center; gap: 4px;
-      background: rgba(244,193,93,0.1);
-      border: 1px solid rgba(244,193,93,0.28);
-      border-radius: 12px; padding: 4px 10px;
-      font-size: 11px; font-weight: 700; color: var(--gold);
+    .score-btn {
+      flex: 1; padding: 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: var(--text); font-size: 15px; font-weight: 700;
+      cursor: pointer; text-align: center;
+      transition: all 0.15s;
     }
-    .predict-btn {
-      padding: 8px 18px; background: var(--red);
-      border: none; border-radius: var(--btn-radius);
-      color: #fff; font-size: 13px; font-weight: 700;
-      cursor: pointer; box-shadow: 0 2px 12px rgba(214,58,54,0.35);
-    }
-    .user-pick {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 12px; color: var(--green); font-weight: 600;
+    .score-btn:hover { background: rgba(214,58,54,0.2); border-color: var(--red); }
+    .score-btn.selected { background: var(--red); border-color: var(--red); box-shadow: 0 2px 12px rgba(214,58,54,0.4); }
+
+    /* Upsell CTA */
+    .match-upsell {
+      background: rgba(244,193,93,0.08);
+      border: 1px solid rgba(244,193,93,0.25);
+      border-radius: 12px; padding: 10px 12px;
+      font-size: 12px; color: var(--gold);
+      text-align: center; cursor: pointer;
     }
 
-    /* ═══════════ PERSONAL AREA ═══════════ */
+    /* ═══ PERSONAL AREA ═══ */
     .back-btn {
-      background: var(--card-bg); border: 1px solid var(--border);
-      color: var(--text-sec); padding: 8px 14px;
+      background: rgba(28,6,6,0.8);
+      border: 1px solid var(--border);
+      color: var(--text-sec); padding: 7px 14px;
       border-radius: 12px; font-size: 13px; cursor: pointer;
     }
 
-    /* Podium */
     .podium-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: var(--card-radius); padding: 20px 16px;
       margin-bottom: 12px;
-      box-shadow: 0 0 30px var(--red-glow);
+      box-shadow: 0 0 30px rgba(214,58,54,0.2);
     }
     .podium {
       display: flex; align-items: flex-end;
@@ -333,12 +465,10 @@
     .lb-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
     .lb-pts  { font-size: 13px; font-weight: 700; color: var(--gold); }
 
-    /* My Position */
     .my-pos-card {
-      background: var(--card-bg);
-      border: 1px solid var(--red);
-      border-radius: var(--card-radius);
-      padding: 18px; margin-bottom: 12px;
+      background: var(--card-bg); border: 1px solid var(--red);
+      border-radius: var(--card-radius); padding: 18px;
+      margin-bottom: 12px;
       box-shadow: 0 0 28px rgba(214,58,54,0.2);
     }
     .my-pos-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -354,50 +484,37 @@
       cursor: pointer; margin-top: 6px;
     }
 
-    .score-row {
-      display: flex; align-items: baseline; gap: 8px;
-      margin-bottom: 10px;
-    }
+    .score-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
     .score-now { font-size: 26px; font-weight: 900; color: var(--text); }
     .score-arrow { color: var(--text-sec); font-size: 14px; }
     .score-proj { font-size: 20px; font-weight: 800; color: var(--gold); }
 
     .prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-sec); margin-bottom: 5px; }
-    .prog-bg { background: rgba(255,255,255,0.07); border-radius: 6px; height: 7px; position: relative; overflow: visible; }
-    .prog-fill {
-      background: linear-gradient(90deg, var(--red), #d05050);
-      height: 7px; border-radius: 6px 0 0 6px; width: 49%;
-    }
+    .prog-bg { background: rgba(255,255,255,0.07); border-radius: 6px; height: 7px; position: relative; }
+    .prog-fill { background: linear-gradient(90deg, var(--red), #d05050); height: 7px; border-radius: 6px 0 0 6px; width: 49%; }
     .prog-dotted {
-      position: absolute; top: 0;
-      left: 49%; right: 25%;
-      height: 7px;
+      position: absolute; top: 0; left: 49%; right: 25%; height: 7px;
       background: repeating-linear-gradient(90deg, rgba(244,193,93,0.45) 0, rgba(244,193,93,0.45) 4px, transparent 4px, transparent 8px);
       border-radius: 0 6px 6px 0;
     }
     .prog-note { font-size: 11px; color: var(--gold); margin-top: 5px; }
 
-    /* Trajectory */
     .traj-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: var(--card-radius); padding: 16px;
-      margin-bottom: 12px;
+      border-radius: var(--card-radius); padding: 16px; margin-bottom: 12px;
     }
     .traj-row { display: flex; align-items: center; justify-content: space-between; }
     .traj-label { font-size: 13px; color: var(--text-sec); }
     .traj-sub { font-size: 11px; color: var(--text-sec); opacity: 0.7; margin-top: 3px; }
     .traj-value { font-size: 28px; font-weight: 900; color: var(--gold); }
 
-    /* What-if */
     .whatif-outer {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: var(--card-radius); padding: 16px;
-      margin-bottom: 12px;
+      border-radius: var(--card-radius); padding: 16px; margin-bottom: 12px;
     }
     .wi-card {
-      background: rgba(255,255,255,0.028);
-      border-radius: 16px; padding: 14px;
-      margin-bottom: 8px;
+      background: rgba(255,255,255,0.025);
+      border-radius: 14px; padding: 14px; margin-bottom: 8px;
     }
     .wi-card:last-child { margin-bottom: 0; }
     .wi-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
@@ -420,43 +537,28 @@
       box-shadow: 0 0 10px rgba(214,58,54,0.65); cursor: pointer;
     }
 
-    /* CTAs */
     .cta-block { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
     .cta-btn {
       display: flex; align-items: center; justify-content: center;
       gap: 8px; padding: 16px;
       border-radius: var(--btn-radius);
-      font-size: 15px; font-weight: 800; border: none; cursor: pointer;
-      transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+      font-size: 15px; font-weight: 800;
+      border: none; cursor: pointer;
+      transition: box-shadow 0.18s, transform 0.18s;
     }
-    .cta-btn.primary {
-      background: var(--red); color: #fff;
-      box-shadow: 0 4px 20px rgba(214,58,54,0.3);
-    }
-    .cta-btn.secondary {
-      background: transparent;
-      border: 1px solid var(--gold-dim);
-      color: var(--gold);
-    }
-    .cta-btn.lit {
-      box-shadow: 0 4px 28px rgba(214,58,54,0.6);
-      transform: scale(1.015);
-    }
-    .cta-btn.secondary.lit {
-      background: rgba(214,58,54,0.12);
-      border-color: var(--red);
-      color: #fff;
-    }
+    .cta-btn.primary { background: var(--red); color: #fff; box-shadow: 0 4px 20px rgba(214,58,54,0.3); }
+    .cta-btn.secondary { background: transparent; border: 1px solid var(--gold-dim); color: var(--gold); }
+    .cta-btn.lit { box-shadow: 0 4px 28px rgba(214,58,54,0.6); transform: scale(1.015); }
+    .cta-btn.secondary.lit { background: rgba(214,58,54,0.12); border-color: var(--red); color: #fff; }
 
-    /* ── BOTTOM NAV ── */
+    /* ═══ BOTTOM NAV ═══ */
     .bottom-nav {
       position: fixed; bottom: 0;
       left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 420px;
-      background: rgba(5,5,5,0.96);
+      background: rgba(4,1,1,0.97);
       border-top: 1px solid var(--border);
-      display: flex;
-      backdrop-filter: blur(12px);
+      display: flex; backdrop-filter: blur(12px);
       z-index: 100;
     }
     .nav-item {
@@ -464,54 +566,37 @@
       align-items: center; padding: 10px 0 14px;
       gap: 3px; font-size: 10px; font-weight: 600;
       color: var(--text-sec); cursor: pointer;
-      border: none; background: none;
-      transition: color 0.15s;
+      border: none; background: none; transition: color 0.15s;
     }
     .nav-item.active { color: var(--red); }
     .nav-icon { font-size: 22px; }
 
-    /* ── BENEFITS SHEET ── */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.72);
-      z-index: 200; display: none;
-    }
+    /* ═══ BENEFITS SHEET ═══ */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; }
     .overlay.open { display: block; }
     .benefits-sheet {
       position: fixed; bottom: 0;
       left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 420px;
-      background: #160405;
+      background: #130303;
       border: 1px solid var(--border);
       border-radius: 26px 26px 0 0;
       padding: 16px 20px 36px;
-      z-index: 201;
-      max-height: 78vh; overflow-y: auto;
-      display: none;
+      z-index: 201; max-height: 78vh;
+      overflow-y: auto; display: none;
     }
     .benefits-sheet.open { display: block; }
-    .sheet-handle {
-      width: 38px; height: 4px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 2px; margin: 0 auto 14px;
-    }
-    .sheet-title { font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 16px; color: var(--text); }
+    .sheet-handle { width: 38px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 0 auto 14px; }
+    .sheet-title { font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 16px; }
 
     .tier-row {
       display: flex; align-items: flex-start; gap: 12px;
       padding: 14px; border-radius: 18px;
       margin-bottom: 8px; border: 1px solid transparent;
-      transition: opacity 0.2s;
     }
-    .tier-row.current {
-      background: rgba(214,58,54,0.1);
-      border-color: rgba(214,58,54,0.4);
-    }
-    .tier-row.earned {
-      background: rgba(53,210,111,0.05);
-      border-color: rgba(53,210,111,0.18);
-    }
-    .tier-row.future { opacity: 0.38; }
+    .tier-row.current { background: rgba(214,58,54,0.1); border-color: rgba(214,58,54,0.4); }
+    .tier-row.earned  { background: rgba(53,210,111,0.05); border-color: rgba(53,210,111,0.18); }
+    .tier-row.future  { opacity: 0.38; }
 
     .t-icon { font-size: 28px; min-width: 36px; text-align: center; padding-top: 2px; }
     .t-info { flex: 1; }
@@ -519,423 +604,486 @@
     .tier-row.current .t-name { color: var(--red); }
     .tier-row.earned  .t-name { color: var(--green); }
     .tier-row.future  .t-name { color: var(--text-sec); }
-    .t-benefit { font-size: 12px; color: var(--text-sec); margin-bottom: 3px; line-height: 1.4; }
-    .t-check { font-size: 12px; font-weight: 700; color: var(--green); white-space: nowrap; padding-top: 3px; }
+    .t-benefit { font-size: 12px; color: var(--text-sec); margin-bottom: 3px; }
     .t-current-label { font-size: 10px; color: var(--red); font-weight: 600; margin-top: 3px; }
-
+    .t-check { font-size: 12px; font-weight: 700; color: var(--green); white-space: nowrap; padding-top: 3px; }
     .close-sheet-btn {
       display: block; margin: 16px auto 0;
-      background: var(--red); border: none;
-      color: #fff; padding: 12px 36px;
-      border-radius: var(--btn-radius);
-      font-size: 14px; font-weight: 800;
-      cursor: pointer; box-shadow: 0 4px 20px rgba(214,58,54,0.35);
+      background: var(--red); border: none; color: #fff;
+      padding: 12px 36px; border-radius: var(--btn-radius);
+      font-size: 14px; font-weight: 800; cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="page">
 
-    <!-- ═════════ HOME SCREEN ═════════ -->
-    <div id="home" class="screen active">
+<!-- Stadium atmosphere -->
+<div class="stadium-bg"></div>
 
-      <div class="topbar">
-        <div class="logo-wrap">
-          <div class="logo">HUMONDIAL</div>
-          <div class="logo-sub">2026 World Cup Game</div>
+<!-- CSS Confetti -->
+<div class="confetti-layer" id="confetti"></div>
+
+<div class="page">
+
+  <!-- ═════════════ HOME SCREEN ═════════════ -->
+  <div id="home" class="screen active">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <button class="topbar-btn">יציאה</button>
+      <div class="logo-center">
+        <div class="logo-main">
+          <span class="hum">HUM</span><span class="mon">ON</span><span class="dial">DIAL</span>
         </div>
-        <div class="topbar-icon-btn">🔔</div>
+        <div class="logo-year">2026</div>
       </div>
-
-      <!-- Hero Card -->
-      <div class="hero-card">
-        <div class="hero-top">
-          <div>
-            <div class="hero-greeting">שלום, גל 👋</div>
-            <div class="hero-points">390 נ׳</div>
-            <div class="hero-points-label">נקודות שנצברו</div>
-          </div>
-          <div class="tier-badge-hero">🥉 ברונזה</div>
-        </div>
-
-        <div class="hero-progress">
-          <div class="hero-progress-labels">
-            <span>ברונזה</span>
-            <span>110 נ׳ לזהב</span>
-          </div>
-          <div class="hero-bar-bg">
-            <div class="hero-bar"></div>
-          </div>
-        </div>
-
-        <div class="hero-ctas">
-          <button class="btn-primary">⚽ נחש עכשיו</button>
-          <button class="btn-secondary">🍽️ שמור שולחן</button>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <div class="qa-tile">
-          <div class="qa-icon">⚽</div>
-          <div class="qa-label">ניחוש יומי</div>
-          <div class="qa-sub">3 פתוחים</div>
-        </div>
-        <div class="qa-tile">
-          <div class="qa-icon">🛵</div>
-          <div class="qa-label">הזמן משלוח</div>
-          <div class="qa-sub">+80 נ׳</div>
-        </div>
-        <div class="qa-tile">
-          <div class="qa-icon">🔥</div>
-          <div class="qa-label">משימות</div>
-          <div class="qa-sub">2 פעילות</div>
-        </div>
-      </div>
-
-      <!-- Stage filter -->
-      <div class="section-label">משחקים</div>
-      <div class="stage-filter">
-        <div class="stage-chip active">הכל</div>
-        <div class="stage-chip">שלב הקבוצות</div>
-        <div class="stage-chip">שמינית גמר</div>
-        <div class="stage-chip">רבע גמר</div>
-        <div class="stage-chip">חצי גמר</div>
-      </div>
-
-      <!-- Featured match -->
-      <div class="match-card featured">
-        <div class="featured-badge">🔥 כפול נקודות</div>
-        <div class="match-meta">
-          <span class="match-group">קבוצה A</span>
-          <span class="status-chip open">פתוח לניחוש</span>
-          <span class="match-time">היום 21:00</span>
-        </div>
-        <div class="match-teams">
-          <div class="team">
-            <div class="team-flag">🇧🇷</div>
-            <div class="team-name">ברזיל</div>
-          </div>
-          <div class="match-vs">VS</div>
-          <div class="team">
-            <div class="team-flag">🇦🇷</div>
-            <div class="team-name">ארגנטינה</div>
-          </div>
-        </div>
-        <div class="match-footer">
-          <div class="pts-badge">⭐ עד 60 נ׳</div>
-          <button class="predict-btn">נחש →</button>
-        </div>
-      </div>
-
-      <div class="match-card">
-        <div class="match-meta">
-          <span class="match-group">קבוצה B</span>
-          <span class="status-chip open">פתוח לניחוש</span>
-          <span class="match-time">מחר 18:00</span>
-        </div>
-        <div class="match-teams">
-          <div class="team">
-            <div class="team-flag">🇩🇪</div>
-            <div class="team-name">גרמניה</div>
-          </div>
-          <div class="match-vs">VS</div>
-          <div class="team">
-            <div class="team-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
-            <div class="team-name">אנגליה</div>
-          </div>
-        </div>
-        <div class="match-footer">
-          <div class="pts-badge">⭐ עד 30 נ׳</div>
-          <button class="predict-btn">נחש →</button>
-        </div>
-      </div>
-
-      <div class="match-card">
-        <div class="match-meta">
-          <span class="match-group">קבוצה C</span>
-          <span class="status-chip locked">נעול</span>
-          <span class="match-time">20.7 22:00</span>
-        </div>
-        <div class="match-teams">
-          <div class="team">
-            <div class="team-flag">🇫🇷</div>
-            <div class="team-name">צרפת</div>
-          </div>
-          <div class="match-vs">VS</div>
-          <div class="team">
-            <div class="team-flag">🇵🇹</div>
-            <div class="team-name">פורטוגל</div>
-          </div>
-        </div>
-        <div class="match-footer">
-          <div class="pts-badge">⭐ עד 30 נ׳</div>
-          <div class="user-pick">✓ ניחשת: 2-1</div>
-        </div>
-      </div>
-
+      <div class="topbar-icon">👤</div>
     </div>
 
-    <!-- ═════════ PERSONAL AREA ═════════ -->
-    <div id="personal" class="screen">
-
-      <div class="topbar">
-        <div class="logo-wrap">
-          <div class="logo">האיזור האישי</div>
-        </div>
-        <button class="back-btn" onclick="switchScreen('home')">← בחזרה</button>
+    <!-- Hero Card -->
+    <div class="hero-card">
+      <div class="hero-top-row">
+        <div class="hero-tagline">פה לא רק רואים מונדיאל.<br>פה משחקים אותו.</div>
+        <div class="hero-trophy">🏆</div>
       </div>
 
-      <!-- Podium -->
-      <div class="section-label">מובילים</div>
-      <div class="podium-card">
-        <div class="podium">
-          <div class="podium-place second">
-            <div class="pod-avatar">🐺</div>
-            <div class="pod-name">יוסי מ׳</div>
-            <div class="pod-pts">840 נ׳</div>
-            <div class="pod-stand">2</div>
-          </div>
-          <div class="podium-place first">
-            <div class="pod-crown">👑</div>
-            <div class="pod-avatar">🦁</div>
-            <div class="pod-name">דני א׳</div>
-            <div class="pod-pts">1,240 נ׳</div>
-            <div class="pod-stand">1</div>
-          </div>
-          <div class="podium-place third">
-            <div class="pod-avatar">🦊</div>
-            <div class="pod-name">ליאור כ׳</div>
-            <div class="pod-pts">710 נ׳</div>
-            <div class="pod-stand">3</div>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-name">משה ג׳</div><div class="lb-pts">680</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-name">רוני ש׳</div><div class="lb-pts">610</div></div>
-        <div class="lb-row"><div class="lb-rank">6</div><div class="lb-name">אבי ל׳</div><div class="lb-pts">580</div></div>
-        <div class="lb-row"><div class="lb-rank">7</div><div class="lb-name">נדב פ׳</div><div class="lb-pts">540</div></div>
-        <div class="lb-row"><div class="lb-rank">8</div><div class="lb-name">עידן מ׳</div><div class="lb-pts">510</div></div>
+      <div class="hero-points-block">
+        <div class="hero-points-num">85 <span>נקודות</span></div>
+        <div class="hero-points-sub">85 נקודות. אתה מתחמם.</div>
       </div>
 
-      <!-- My Position -->
-      <div class="section-label">המיקום שלי</div>
-      <div class="my-pos-card">
-        <div class="my-pos-row">
-          <div class="my-rank">#12</div>
-          <div>
-            <div class="my-name">גל ת׳</div>
-            <div class="my-pts-label">390 נקודות</div>
-            <button class="tier-badge-btn" onclick="openSheet()">🥉 ברונזה ▾</button>
+      <div class="hero-tier-row">
+        <div class="tier-medal-icon">🥉</div>
+        <div class="tier-bar-wrap">
+          <div class="tier-bar-label">
+            <span class="tier-bar-label-title">השלב שלי: ברונזה</span>
+            <span class="tier-bar-label-pct">85%</span>
           </div>
-        </div>
-        <div class="score-row">
-          <span class="score-now">390</span>
-          <span class="score-arrow">→</span>
-          <span class="score-proj">(~820 נ׳)</span>
-        </div>
-        <div class="prog-labels">
-          <span>ברונזה</span>
-          <span>110 נ׳ לזהב</span>
-        </div>
-        <div class="prog-bg">
-          <div class="prog-fill"></div>
-          <div class="prog-dotted"></div>
-        </div>
-        <div class="prog-note">צפי: רמת זהב עד 19.7.26 🏆</div>
-      </div>
-
-      <!-- Trajectory -->
-      <div class="section-label">הצפי שלי</div>
-      <div class="traj-card">
-        <div class="traj-row">
-          <div>
-            <div class="traj-label">צפי סיום (19.7.26)</div>
-            <div class="traj-sub">בקצב הנוכחי</div>
+          <div class="tier-bar-bg">
+            <div class="tier-bar-fill">
+              <div class="tier-bar-ball">⚽</div>
+            </div>
           </div>
-          <div class="traj-value">~820 נ׳</div>
+          <div class="tier-bar-sub">עוד 15 נקודות ואתה עולה לכסף</div>
         </div>
       </div>
 
-      <!-- What-if sliders -->
-      <div class="section-label">מה אם...</div>
-      <div class="whatif-outer">
-
-        <div class="wi-card" data-rate="30" data-type="predict" data-max="20">
-          <div class="wi-title">אם אנחש נכון עוד <span>4</span> משחקים</div>
-          <div class="wi-score-row">
-            <span class="wi-score-base">ניקוד אפשרי:</span>
-            <span class="wi-score-now">390</span>
-            <span class="wi-score-sep">→</span>
-            <span class="wi-score-proj">510 נ׳</span>
-          </div>
-          <div class="wi-slider-row">
-            <div class="wi-icon">⚽</div>
-            <input type="range" class="wi-slider" min="0" max="20" value="4">
-          </div>
-        </div>
-
-        <div class="wi-card" data-rate="120" data-type="table" data-max="10">
-          <div class="wi-title">אם אזמין שולחן עוד <span>3</span> פעמים</div>
-          <div class="wi-score-row">
-            <span class="wi-score-base">ניקוד אפשרי:</span>
-            <span class="wi-score-now">390</span>
-            <span class="wi-score-sep">→</span>
-            <span class="wi-score-proj">750 נ׳</span>
-          </div>
-          <div class="wi-slider-row">
-            <div class="wi-icon">🍽️</div>
-            <input type="range" class="wi-slider" min="0" max="10" value="3">
-          </div>
-        </div>
-
-        <div class="wi-card" data-rate="80" data-type="delivery" data-max="10">
-          <div class="wi-title">אם אזמין משלוח עוד <span>2</span> פעמים</div>
-          <div class="wi-score-row">
-            <span class="wi-score-base">ניקוד אפשרי:</span>
-            <span class="wi-score-now">390</span>
-            <span class="wi-score-sep">→</span>
-            <span class="wi-score-proj">550 נ׳</span>
-          </div>
-          <div class="wi-slider-row">
-            <div class="wi-icon">🛵</div>
-            <input type="range" class="wi-slider" min="0" max="10" value="2">
-          </div>
-        </div>
+      <div class="snapshot-block">
+        <div class="snapshot-title">Today's Snapshot</div>
+        <div class="snapshot-row">⚽ <span>3 משחקים פתוחים לניחוש</span></div>
+        <div class="snapshot-row">🔥 <span>משחק אחד עם בוסט נקודות</span></div>
+        <div class="snapshot-row">🍔 <span>צפייה ביומנגס = +15 נקודות</span></div>
       </div>
 
-      <!-- CTAs -->
-      <div class="section-label">פעולות</div>
-      <div class="cta-block">
-        <button class="cta-btn primary" id="cta-predict">⚽ לניחושים →</button>
-        <button class="cta-btn secondary" id="cta-table">🍽️ הזמן שולחן ↗</button>
-        <button class="cta-btn secondary" id="cta-delivery">🛵 הזמן משלוח ↗</button>
+      <div class="hero-ctas">
+        <button class="btn-red">→ נחש עכשיו</button>
+        <button class="btn-gold">📅 שמור לי שולחן</button>
       </div>
+    </div>
 
+    <!-- Quick Actions -->
+    <div class="section-label">
+      <span>פעולות מהירות</span>
+      <span class="section-label-en">Quick Actions</span>
+    </div>
+    <div class="quick-actions">
+      <div class="qa-tile qa-red">
+        <div class="qa-icon">⚽</div>
+        <div class="qa-label">ניחוש יומי</div>
+        <div class="qa-pts">+5 pts</div>
+      </div>
+      <div class="qa-tile qa-gold">
+        <div class="qa-icon">🍔</div>
+        <div class="qa-label">צפייה ביומנגס</div>
+        <div class="qa-pts">+15 pts</div>
+      </div>
+      <div class="qa-tile qa-dark">
+        <div class="qa-icon">🔥</div>
+        <div class="qa-label">משימות</div>
+        <div class="qa-pts">Open now</div>
+      </div>
+    </div>
+
+    <!-- Today Status -->
+    <div class="today-status">
+      <div class="status-chip">משחקים פתוחים: <span class="chip-val">3</span></div>
+      <div class="status-chip">ניחושים שבוצעו: <span class="chip-val">1</span></div>
+      <div class="status-chip">נקודות זמינות היום: <span class="chip-val">+35</span></div>
+    </div>
+
+    <!-- Stage filter -->
+    <div class="section-label">
+      <span>משחקים</span>
+      <span class="section-label-en">Match Tabs</span>
+    </div>
+    <div class="stage-filter">
+      <div class="stage-chip active">שלב הכתים</div>
+      <div class="stage-chip">שמינית גמר</div>
+      <div class="stage-chip">שלב המיברר</div>
+      <div class="stage-chip">שלב הבסיסי</div>
+    </div>
+
+    <!-- Featured match -->
+    <div class="section-label">
+      <span>משחק מומלץ</span>
+      <span class="section-label-en">Featured Match</span>
+    </div>
+    <div class="match-card featured">
+      <div class="featured-tag">🔥 כפול נקודות</div>
+      <div class="match-header">
+        <div class="match-header-left">
+          <div class="match-datetime">שבת 15.6, 18:00</div>
+          <div class="match-lock">ננעל ב׳ 17:55</div>
+        </div>
+        <span class="status-chip-small open">פתוח לניחוש</span>
+      </div>
+      <div class="match-teams-row">
+        <div class="team-side">
+          <div class="team-flag">🇫🇷</div>
+          <div class="team-name">צרפת</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="team-side away">
+          <div class="team-flag">🇩🇪</div>
+          <div class="team-name">גרמניה</div>
+        </div>
+      </div>
+      <div class="score-btns">
+        <button class="score-btn">1</button>
+        <button class="score-btn selected">X</button>
+        <button class="score-btn">2</button>
+      </div>
+      <div class="match-upsell">רוצה לשחק כמו שצריך? שמור שולחן וקבל 15+ נקודות.</div>
+    </div>
+
+    <!-- Open Matches -->
+    <div class="section-label">
+      <span>משחקים פתוחים</span>
+      <span class="section-label-en">Open Matches</span>
+    </div>
+
+    <div class="match-card">
+      <div class="match-header">
+        <div class="match-header-left">
+          <div class="match-datetime">שבת 15.6, 18:00</div>
+          <div class="match-lock">ננעל ב׳ 17:55</div>
+        </div>
+        <span class="status-chip-small open">פתוח לניחוש</span>
+      </div>
+      <div class="match-teams-row">
+        <div class="team-side">
+          <div class="team-flag">🇧🇷</div>
+          <div class="team-name">ברזיל</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="team-side away">
+          <div class="team-flag">🇦🇷</div>
+          <div class="team-name">ארגנטינה</div>
+        </div>
+      </div>
+      <div class="score-btns">
+        <button class="score-btn selected">1</button>
+        <button class="score-btn">X</button>
+        <button class="score-btn">2</button>
+      </div>
+    </div>
+
+    <div class="match-card">
+      <div class="match-header">
+        <div class="match-header-left">
+          <div class="match-datetime">ראשון 16.6, 21:00</div>
+          <div class="match-lock">ננעל ב׳ 20:55</div>
+        </div>
+        <span class="status-chip-small locked">נעול</span>
+      </div>
+      <div class="match-teams-row">
+        <div class="team-side">
+          <div class="team-flag">🇵🇹</div>
+          <div class="team-name">פורטוגל</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="team-side away">
+          <div class="team-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+          <div class="team-name">אנגליה</div>
+        </div>
+      </div>
+      <div class="score-btns">
+        <button class="score-btn">1</button>
+        <button class="score-btn">X</button>
+        <button class="score-btn selected">2</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═════════════ PERSONAL AREA ═════════════ -->
+  <div id="personal" class="screen">
+
+    <div class="topbar">
+      <div class="logo-center" style="text-align:right;">
+        <div class="logo-main" style="font-size:18px;">האיזור האישי</div>
+      </div>
+      <button class="back-btn" onclick="switchScreen('home')">← בחזרה</button>
+    </div>
+
+    <div class="section-label"><span>מובילים</span></div>
+    <div class="podium-card">
+      <div class="podium">
+        <div class="podium-place second">
+          <div class="pod-avatar">🐺</div>
+          <div class="pod-name">יוסי מ׳</div>
+          <div class="pod-pts">840 נ׳</div>
+          <div class="pod-stand">2</div>
+        </div>
+        <div class="podium-place first">
+          <div class="pod-crown">👑</div>
+          <div class="pod-avatar">🦁</div>
+          <div class="pod-name">דני א׳</div>
+          <div class="pod-pts">1,240 נ׳</div>
+          <div class="pod-stand">1</div>
+        </div>
+        <div class="podium-place third">
+          <div class="pod-avatar">🦊</div>
+          <div class="pod-name">ליאור כ׳</div>
+          <div class="pod-pts">710 נ׳</div>
+          <div class="pod-stand">3</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="lb-row"><div class="lb-rank">4</div><div class="lb-name">משה ג׳</div><div class="lb-pts">680</div></div>
+      <div class="lb-row"><div class="lb-rank">5</div><div class="lb-name">רוני ש׳</div><div class="lb-pts">610</div></div>
+      <div class="lb-row"><div class="lb-rank">6</div><div class="lb-name">אבי ל׳</div><div class="lb-pts">580</div></div>
+      <div class="lb-row"><div class="lb-rank">7</div><div class="lb-name">נדב פ׳</div><div class="lb-pts">540</div></div>
+      <div class="lb-row"><div class="lb-rank">8</div><div class="lb-name">עידן מ׳</div><div class="lb-pts">510</div></div>
+    </div>
+
+    <div class="section-label"><span>המיקום שלי</span></div>
+    <div class="my-pos-card">
+      <div class="my-pos-row">
+        <div class="my-rank">#12</div>
+        <div>
+          <div class="my-name">גל ת׳</div>
+          <div class="my-pts-label">390 נקודות</div>
+          <button class="tier-badge-btn" onclick="openSheet()">🥉 ברונזה ▾</button>
+        </div>
+      </div>
+      <div class="score-row">
+        <span class="score-now">390</span>
+        <span class="score-arrow">→</span>
+        <span class="score-proj">(~820 נ׳)</span>
+      </div>
+      <div class="prog-labels"><span>ברונזה</span><span>110 נ׳ לזהב</span></div>
+      <div class="prog-bg">
+        <div class="prog-fill"></div>
+        <div class="prog-dotted"></div>
+      </div>
+      <div class="prog-note">צפי: רמת זהב עד 19.7.26 🏆</div>
+    </div>
+
+    <div class="section-label"><span>הצפי שלי</span></div>
+    <div class="traj-card">
+      <div class="traj-row">
+        <div>
+          <div class="traj-label">צפי סיום (19.7.26)</div>
+          <div class="traj-sub">בקצב הנוכחי</div>
+        </div>
+        <div class="traj-value">~820 נ׳</div>
+      </div>
+    </div>
+
+    <div class="section-label"><span>מה אם...</span></div>
+    <div class="whatif-outer">
+      <div class="wi-card" data-rate="30" data-type="predict" data-max="20">
+        <div class="wi-title">אם אנחש נכון עוד <span>4</span> משחקים</div>
+        <div class="wi-score-row">
+          <span class="wi-score-base">ניקוד אפשרי:</span>
+          <span class="wi-score-now">390</span>
+          <span class="wi-score-sep">→</span>
+          <span class="wi-score-proj">510 נ׳</span>
+        </div>
+        <div class="wi-slider-row">
+          <div class="wi-icon">⚽</div>
+          <input type="range" class="wi-slider" min="0" max="20" value="4">
+        </div>
+      </div>
+      <div class="wi-card" data-rate="120" data-type="table" data-max="10">
+        <div class="wi-title">אם אזמין שולחן עוד <span>3</span> פעמים</div>
+        <div class="wi-score-row">
+          <span class="wi-score-base">ניקוד אפשרי:</span>
+          <span class="wi-score-now">390</span>
+          <span class="wi-score-sep">→</span>
+          <span class="wi-score-proj">750 נ׳</span>
+        </div>
+        <div class="wi-slider-row">
+          <div class="wi-icon">🍽️</div>
+          <input type="range" class="wi-slider" min="0" max="10" value="3">
+        </div>
+      </div>
+      <div class="wi-card" data-rate="80" data-type="delivery" data-max="10">
+        <div class="wi-title">אם אזמין משלוח עוד <span>2</span> פעמים</div>
+        <div class="wi-score-row">
+          <span class="wi-score-base">ניקוד אפשרי:</span>
+          <span class="wi-score-now">390</span>
+          <span class="wi-score-sep">→</span>
+          <span class="wi-score-proj">550 נ׳</span>
+        </div>
+        <div class="wi-slider-row">
+          <div class="wi-icon">🛵</div>
+          <input type="range" class="wi-slider" min="0" max="10" value="2">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label"><span>פעולות</span></div>
+    <div class="cta-block">
+      <button class="cta-btn primary" id="cta-predict">⚽ לניחושים →</button>
+      <button class="cta-btn secondary" id="cta-table">🍽️ הזמן שולחן ↗</button>
+      <button class="cta-btn secondary" id="cta-delivery">🛵 הזמן משלוח ↗</button>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
-      <span class="nav-icon">🏠</span><span>בית</span>
-    </button>
-    <button class="nav-item" id="nav-personal" onclick="switchScreen('personal')">
-      <span class="nav-icon">👤</span><span>האיזור האישי</span>
-    </button>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
+    <span class="nav-icon">🏠</span><span>בית</span>
+  </button>
+  <button class="nav-item" id="nav-personal" onclick="switchScreen('personal')">
+    <span class="nav-icon">👤</span><span>האיזור האישי</span>
+  </button>
+</div>
+
+<!-- Benefits Sheet -->
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="benefits-sheet" id="benefits-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">🏆 רמות השחקן</div>
+  <div class="tier-row future">
+    <div class="t-icon">👑</div>
+    <div class="t-info">
+      <div class="t-name">אגדה</div>
+      <div class="t-benefit">🎁 ארוחה זוגית חינם</div>
+      <div class="t-benefit">🎟️ כניסה לאירוע הגמר</div>
+      <div class="t-benefit">⚡ כפל נקודות בכל המשחקים</div>
+    </div>
   </div>
-
-  <!-- Benefits Sheet -->
-  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
-  <div class="benefits-sheet" id="benefits-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">🏆 רמות השחקן</div>
-
-    <!-- Legend (future) -->
-    <div class="tier-row future">
-      <div class="t-icon">👑</div>
-      <div class="t-info">
-        <div class="t-name">אגדה</div>
-        <div class="t-benefit">🎁 ארוחה זוגית חינם</div>
-        <div class="t-benefit">🎟️ כניסה לאירוע הגמר</div>
-        <div class="t-benefit">⚡ כפל נקודות בכל המשחקים</div>
-      </div>
+  <div class="tier-row future">
+    <div class="t-icon">🥇</div>
+    <div class="t-info">
+      <div class="t-name">זהב</div>
+      <div class="t-benefit">🍕 20% הנחה על משלוחים</div>
+      <div class="t-benefit">📅 עדיפות בהזמנת שולחן</div>
     </div>
-
-    <!-- Gold (future) -->
-    <div class="tier-row future">
-      <div class="t-icon">🥇</div>
-      <div class="t-info">
-        <div class="t-name">זהב</div>
-        <div class="t-benefit">🍕 20% הנחה על משלוחים</div>
-        <div class="t-benefit">📅 עדיפות בהזמנת שולחן</div>
-      </div>
-    </div>
-
-    <!-- Bronze (current) -->
-    <div class="tier-row current">
-      <div class="t-icon">🥉</div>
-      <div class="t-info">
-        <div class="t-name">ברונזה</div>
-        <div class="t-current-label">✦ הרמה הנוכחית שלך</div>
-        <div class="t-benefit">☕ קפה חינם עם הזמנה</div>
-        <div class="t-benefit">🎯 גישה לניחושים מיוחדים</div>
-      </div>
-    </div>
-
-    <!-- Silver (earned) -->
-    <div class="tier-row earned">
-      <div class="t-icon">🥈</div>
-      <div class="t-info">
-        <div class="t-name">כסף</div>
-        <div class="t-benefit">🎫 כרטיס צפייה חינם</div>
-      </div>
-      <div class="t-check">✓ נצבר</div>
-    </div>
-
-    <button class="close-sheet-btn" onclick="closeSheet()">סגור</button>
   </div>
+  <div class="tier-row future">
+    <div class="t-icon">🥈</div>
+    <div class="t-info">
+      <div class="t-name">כסף</div>
+      <div class="t-benefit">🎫 כרטיס צפייה חינם</div>
+    </div>
+  </div>
+  <div class="tier-row current">
+    <div class="t-icon">🥉</div>
+    <div class="t-info">
+      <div class="t-name">ברונזה</div>
+      <div class="t-current-label">✦ הרמה הנוכחית שלך</div>
+      <div class="t-benefit">☕ קפה חינם עם הזמנה</div>
+      <div class="t-benefit">🎯 גישה לניחושים מיוחדים</div>
+    </div>
+  </div>
+  <button class="close-sheet-btn" onclick="closeSheet()">סגור</button>
+</div>
 
-  <script>
-    const BASE = 390;
+<script>
+  // ─── Confetti ───
+  const colors = ['#D63A36','#F4C15D','#F8F3EA','#35D26F','#10233F','#ffffff'];
+  const confettiEl = document.getElementById('confetti');
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: ${Math.random()*-20}%;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration: ${4 + Math.random()*6}s;
+      animation-delay: ${Math.random()*8}s;
+      transform: rotate(${Math.random()*360}deg);
+      width: ${4 + Math.random()*6}px;
+      height: ${8 + Math.random()*10}px;
+    `;
+    confettiEl.appendChild(piece);
+  }
 
-    function switchScreen(s) {
-      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(s).classList.add('active');
-      document.getElementById('nav-' + s).classList.add('active');
-    }
+  // ─── Screen switch ───
+  function switchScreen(s) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(s).classList.add('active');
+    document.getElementById('nav-' + s).classList.add('active');
+    window.scrollTo(0, 0);
+  }
 
-    function openSheet() {
-      document.getElementById('overlay').classList.add('open');
-      document.getElementById('benefits-sheet').classList.add('open');
-    }
-    function closeSheet() {
-      document.getElementById('overlay').classList.remove('open');
-      document.getElementById('benefits-sheet').classList.remove('open');
-    }
+  // ─── Benefits sheet ───
+  function openSheet() {
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('benefits-sheet').classList.add('open');
+  }
+  function closeSheet() {
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('benefits-sheet').classList.remove('open');
+  }
 
-    const CTA_MAP = { predict: 'cta-predict', table: 'cta-table', delivery: 'cta-delivery' };
+  // ─── Score buttons ───
+  document.querySelectorAll('.score-btns').forEach(group => {
+    group.querySelectorAll('.score-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  });
 
-    function resetCtas(exceptType) {
+  // ─── Stage filter ───
+  document.querySelectorAll('.stage-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.closest('.stage-filter').querySelectorAll('.stage-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // ─── What-if sliders ───
+  const BASE = 390;
+  const CTA_MAP = { predict: 'cta-predict', table: 'cta-table', delivery: 'cta-delivery' };
+  let lastTouched = null;
+
+  document.querySelectorAll('.wi-card').forEach(card => {
+    const slider = card.querySelector('.wi-slider');
+    const titleSpan = card.querySelector('.wi-title span');
+    const scoreNow = card.querySelector('.wi-score-now');
+    const scoreProj = card.querySelector('.wi-score-proj');
+    const rate = parseInt(card.dataset.rate);
+    const type = card.dataset.type;
+    const max = parseInt(card.dataset.max);
+
+    slider.addEventListener('input', () => {
+      const v = parseInt(slider.value);
+      titleSpan.textContent = v;
+      scoreNow.textContent = BASE;
+      scoreProj.textContent = (BASE + v * rate) + ' נ׳';
+      const pct = v / max * 100;
+      slider.style.background = `linear-gradient(to left, #D63A36 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`;
+
       Object.entries(CTA_MAP).forEach(([t, id]) => {
-        if (t === exceptType) return;
         const btn = document.getElementById(id);
         btn.classList.remove('lit');
-        btn.style.cssText = '';
+        if (t !== type) { btn.style.cssText = ''; }
       });
-    }
-
-    document.querySelectorAll('.wi-card').forEach(card => {
-      const slider = card.querySelector('.wi-slider');
-      const titleSpan = card.querySelector('.wi-title span');
-      const scoreNow = card.querySelector('.wi-score-now');
-      const scoreProj = card.querySelector('.wi-score-proj');
-      const rate = parseInt(card.dataset.rate);
-      const type = card.dataset.type;
-      const max = parseInt(card.dataset.max);
-
-      slider.addEventListener('input', () => {
-        const v = parseInt(slider.value);
-        titleSpan.textContent = v;
-        scoreNow.textContent = BASE;
-        scoreProj.textContent = (BASE + v * rate) + ' נ׳';
-        const pct = v / max * 100;
-        slider.style.background = `linear-gradient(to left, #D63A36 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`;
-
-        resetCtas(type);
-        const activeCta = document.getElementById(CTA_MAP[type]);
-        if (activeCta) activeCta.classList.add('lit');
-      });
+      const activeCta = document.getElementById(CTA_MAP[type]);
+      if (activeCta) activeCta.classList.add('lit');
+      lastTouched = type;
     });
-
-    // Stage filter chips
-    document.querySelectorAll('.stage-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        chip.closest('.stage-filter').querySelectorAll('.stage-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-      });
-    });
-  </script>
+  });
+</script>
 </body>
 </html>

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Humondial 2026 — Redesign Mockup</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --bg2: #120607;
+      --bg3: #230B0D;
+      --card-bg: rgba(32, 8, 9, 0.88);
+      --red: #D63A36;
+      --red-glow: rgba(214, 58, 54, 0.35);
+      --gold: #F4C15D;
+      --gold-dim: rgba(244, 193, 93, 0.55);
+      --green: #35D26F;
+      --text: #F8F3EA;
+      --text-sec: #9D8585;
+      --border: rgba(214, 58, 54, 0.3);
+      --card-radius: 24px;
+      --btn-radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background: linear-gradient(160deg, #050505 0%, #120607 25%, #230B0D 55%, #07111F 100%);
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, 'Segoe UI', sans-serif;
+      position: relative;
+    }
+
+    /* Stadium ambient lights */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 35% at 15% 8%, rgba(214,58,54,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 25% at 85% 5%, rgba(244,193,93,0.05) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 30% at 50% 0%, rgba(16,35,63,0.35) 0%, transparent 75%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .page {
+      max-width: 420px; margin: 0 auto;
+      padding: 0 16px 80px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 18px 0 14px;
+    }
+    .logo-wrap { display: flex; flex-direction: column; }
+    .logo {
+      font-size: 22px; font-weight: 900; letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #F8F3EA 55%, #F4C15D 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub { font-size: 9px; font-weight: 600; color: var(--text-sec); letter-spacing: 3px; text-transform: uppercase; margin-top: 1px; }
+    .topbar-icon-btn {
+      width: 38px; height: 38px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer;
+    }
+
+    /* ── HERO CARD ── */
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 12px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 40px var(--red-glow), 0 4px 24px rgba(0,0,0,0.6);
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: -40%; right: -15%;
+      width: 220px; height: 220px;
+      background: radial-gradient(ellipse, rgba(244,193,93,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute; bottom: -20%; left: -10%;
+      width: 180px; height: 180px;
+      background: radial-gradient(ellipse, rgba(214,58,54,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .hero-greeting { font-size: 12px; color: var(--text-sec); margin-bottom: 4px; }
+    .hero-points {
+      font-size: 48px; font-weight: 900; color: var(--gold);
+      line-height: 1; letter-spacing: -2px;
+    }
+    .hero-points-label { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+    .tier-badge-hero {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(244,193,93,0.1);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 7px 13px;
+      font-size: 13px; font-weight: 700;
+      color: var(--gold);
+      cursor: pointer;
+    }
+    .hero-progress { margin-bottom: 16px; position: relative; z-index: 1; }
+    .hero-progress-labels {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: var(--text-sec); margin-bottom: 6px;
+    }
+    .hero-bar-bg {
+      background: rgba(255,255,255,0.08);
+      border-radius: 6px; height: 8px; overflow: hidden;
+    }
+    .hero-bar {
+      background: linear-gradient(90deg, var(--red) 0%, #E05555 70%, #c8973a 100%);
+      height: 8px; border-radius: 6px; width: 39%;
+      position: relative;
+    }
+    .hero-bar::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: rgba(255,255,255,0.25); border-radius: 6px;
+    }
+    .hero-ctas { display: flex; gap: 10px; position: relative; z-index: 1; }
+    .btn-primary {
+      flex: 1; padding: 13px;
+      background: var(--red); border: none;
+      border-radius: var(--btn-radius);
+      color: #fff; font-size: 14px; font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(214,58,54,0.45);
+      letter-spacing: 0.3px;
+    }
+    .btn-secondary {
+      flex: 1; padding: 13px;
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--btn-radius);
+      color: var(--gold); font-size: 14px; font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+    .qa-tile {
+      flex: 1; background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 8px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 5px;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .qa-tile:active { border-color: var(--red); }
+    .qa-icon { font-size: 24px; }
+    .qa-label { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; }
+    .qa-sub { font-size: 10px; color: var(--text-sec); text-align: center; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-sec); text-transform: uppercase;
+      letter-spacing: 2px; margin-bottom: 10px;
+    }
+
+    /* ── STAGE FILTER ── */
+    .stage-filter {
+      display: flex; gap: 8px; margin-bottom: 16px;
+      overflow-x: auto; padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .stage-filter::-webkit-scrollbar { display: none; }
+    .stage-chip {
+      padding: 7px 15px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      white-space: nowrap; cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .stage-chip.active {
+      background: var(--red); color: #fff;
+      box-shadow: 0 2px 14px rgba(214,58,54,0.4);
+    }
+    .stage-chip:not(.active) {
+      background: var(--card-bg);
+      border-color: var(--border);
+      color: var(--text-sec);
+    }
+
+    /* ── MATCH CARD ── */
+    .match-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 16px; margin-bottom: 10px;
+      position: relative; overflow: hidden;
+    }
+    .match-card.featured {
+      border-color: rgba(244,193,93,0.45);
+      box-shadow: 0 0 24px rgba(244,193,93,0.08);
+    }
+    .featured-badge {
+      position: absolute; top: 0; left: 0;
+      background: linear-gradient(135deg, var(--gold), #d4930a);
+      color: #000; font-size: 10px; font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 0 0 14px 0;
+    }
+    .match-meta {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .match-group { font-size: 11px; color: var(--text-sec); }
+    .match-time { font-size: 11px; color: var(--text-sec); }
+    .status-chip {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 9px; border-radius: 10px;
+    }
+    .open { background: rgba(53,210,111,0.14); color: var(--green); }
+    .locked { background: rgba(157,133,133,0.15); color: var(--text-sec); }
+    .live { background: rgba(214,58,54,0.18); color: var(--red); }
+
+    .match-teams {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .team {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 5px; flex: 1;
+    }
+    .team-flag { font-size: 34px; }
+    .team-name { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; }
+    .match-vs { font-size: 16px; font-weight: 900; color: var(--text-sec); padding: 0 8px; }
+
+    .match-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .pts-badge {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(244,193,93,0.1);
+      border: 1px solid rgba(244,193,93,0.28);
+      border-radius: 12px; padding: 4px 10px;
+      font-size: 11px; font-weight: 700; color: var(--gold);
+    }
+    .predict-btn {
+      padding: 8px 18px; background: var(--red);
+      border: none; border-radius: var(--btn-radius);
+      color: #fff; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 2px 12px rgba(214,58,54,0.35);
+    }
+    .user-pick {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--green); font-weight: 600;
+    }
+
+    /* ═══════════ PERSONAL AREA ═══════════ */
+    .back-btn {
+      background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--text-sec); padding: 8px 14px;
+      border-radius: 12px; font-size: 13px; cursor: pointer;
+    }
+
+    /* Podium */
+    .podium-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 20px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+    .podium {
+      display: flex; align-items: flex-end;
+      justify-content: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .podium-place { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .podium-place.first  { order: 2; }
+    .podium-place.second { order: 1; }
+    .podium-place.third  { order: 3; }
+
+    .pod-avatar {
+      width: 50px; height: 50px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px;
+    }
+    .podium-place.first .pod-avatar {
+      width: 66px; height: 66px; font-size: 27px;
+      background: linear-gradient(135deg, var(--gold), #c47f0a);
+      box-shadow: 0 0 24px rgba(244,193,93,0.5);
+    }
+    .podium-place.second .pod-avatar { background: linear-gradient(135deg, #c0c0c0, #808080); }
+    .podium-place.third  .pod-avatar { background: linear-gradient(135deg, #cd7f32, #8b5010); }
+
+    .pod-name { font-size: 12px; font-weight: 700; color: var(--text); }
+    .pod-pts  { font-size: 11px; color: var(--text-sec); }
+    .pod-crown { font-size: 18px; }
+
+    .pod-stand {
+      border-radius: 6px 6px 0 0; width: 74px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: rgba(255,255,255,0.35);
+    }
+    .podium-place.first  .pod-stand { height: 64px; background: rgba(244,193,93,0.12); border: 1px solid rgba(244,193,93,0.25); border-bottom: none; }
+    .podium-place.second .pod-stand { height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-bottom: none; }
+    .podium-place.third  .pod-stand { height: 36px; background: rgba(205,127,50,0.1); border: 1px solid rgba(205,127,50,0.18); border-bottom: none; }
+
+    .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+    .lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid rgba(214,58,54,0.08); }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank { font-size: 13px; color: var(--text-sec); min-width: 24px; text-align: center; }
+    .lb-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+    .lb-pts  { font-size: 13px; font-weight: 700; color: var(--gold); }
+
+    /* My Position */
+    .my-pos-card {
+      background: var(--card-bg);
+      border: 1px solid var(--red);
+      border-radius: var(--card-radius);
+      padding: 18px; margin-bottom: 12px;
+      box-shadow: 0 0 28px rgba(214,58,54,0.2);
+    }
+    .my-pos-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .my-rank { font-size: 38px; font-weight: 900; color: var(--red); min-width: 58px; text-align: center; }
+    .my-name { font-size: 16px; font-weight: 800; color: var(--text); }
+    .my-pts-label { font-size: 13px; color: var(--text-sec); margin-top: 2px; }
+    .tier-badge-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(244,193,93,0.1);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px; padding: 5px 12px;
+      font-size: 11px; font-weight: 800; color: var(--gold);
+      cursor: pointer; margin-top: 6px;
+    }
+
+    .score-row {
+      display: flex; align-items: baseline; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .score-now { font-size: 26px; font-weight: 900; color: var(--text); }
+    .score-arrow { color: var(--text-sec); font-size: 14px; }
+    .score-proj { font-size: 20px; font-weight: 800; color: var(--gold); }
+
+    .prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-sec); margin-bottom: 5px; }
+    .prog-bg { background: rgba(255,255,255,0.07); border-radius: 6px; height: 7px; position: relative; overflow: visible; }
+    .prog-fill {
+      background: linear-gradient(90deg, var(--red), #d05050);
+      height: 7px; border-radius: 6px 0 0 6px; width: 49%;
+    }
+    .prog-dotted {
+      position: absolute; top: 0;
+      left: 49%; right: 25%;
+      height: 7px;
+      background: repeating-linear-gradient(90deg, rgba(244,193,93,0.45) 0, rgba(244,193,93,0.45) 4px, transparent 4px, transparent 8px);
+      border-radius: 0 6px 6px 0;
+    }
+    .prog-note { font-size: 11px; color: var(--gold); margin-top: 5px; }
+
+    /* Trajectory */
+    .traj-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 16px;
+      margin-bottom: 12px;
+    }
+    .traj-row { display: flex; align-items: center; justify-content: space-between; }
+    .traj-label { font-size: 13px; color: var(--text-sec); }
+    .traj-sub { font-size: 11px; color: var(--text-sec); opacity: 0.7; margin-top: 3px; }
+    .traj-value { font-size: 28px; font-weight: 900; color: var(--gold); }
+
+    /* What-if */
+    .whatif-outer {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 16px;
+      margin-bottom: 12px;
+    }
+    .wi-card {
+      background: rgba(255,255,255,0.028);
+      border-radius: 16px; padding: 14px;
+      margin-bottom: 8px;
+    }
+    .wi-card:last-child { margin-bottom: 0; }
+    .wi-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .wi-title span { color: var(--red); }
+    .wi-score-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+    .wi-score-base { font-size: 11px; color: var(--text-sec); }
+    .wi-score-now { font-size: 15px; font-weight: 900; color: var(--text); }
+    .wi-score-sep { color: var(--text-sec); font-size: 11px; }
+    .wi-score-proj { font-size: 17px; font-weight: 900; color: var(--gold); }
+    .wi-slider-row { display: flex; align-items: center; gap: 10px; }
+    .wi-icon { font-size: 20px; }
+    .wi-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 5px; border-radius: 3px; outline: none;
+      background: linear-gradient(to left, var(--red) 20%, rgba(255,255,255,0.1) 20%);
+    }
+    .wi-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--red);
+      box-shadow: 0 0 10px rgba(214,58,54,0.65); cursor: pointer;
+    }
+
+    /* CTAs */
+    .cta-block { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .cta-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 16px;
+      border-radius: var(--btn-radius);
+      font-size: 15px; font-weight: 800; border: none; cursor: pointer;
+      transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+    }
+    .cta-btn.primary {
+      background: var(--red); color: #fff;
+      box-shadow: 0 4px 20px rgba(214,58,54,0.3);
+    }
+    .cta-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+    }
+    .cta-btn.lit {
+      box-shadow: 0 4px 28px rgba(214,58,54,0.6);
+      transform: scale(1.015);
+    }
+    .cta-btn.secondary.lit {
+      background: rgba(214,58,54,0.12);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 420px;
+      background: rgba(5,5,5,0.96);
+      border-top: 1px solid var(--border);
+      display: flex;
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 10px 0 14px;
+      gap: 3px; font-size: 10px; font-weight: 600;
+      color: var(--text-sec); cursor: pointer;
+      border: none; background: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--red); }
+    .nav-icon { font-size: 22px; }
+
+    /* ── BENEFITS SHEET ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 200; display: none;
+    }
+    .overlay.open { display: block; }
+    .benefits-sheet {
+      position: fixed; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 420px;
+      background: #160405;
+      border: 1px solid var(--border);
+      border-radius: 26px 26px 0 0;
+      padding: 16px 20px 36px;
+      z-index: 201;
+      max-height: 78vh; overflow-y: auto;
+      display: none;
+    }
+    .benefits-sheet.open { display: block; }
+    .sheet-handle {
+      width: 38px; height: 4px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 2px; margin: 0 auto 14px;
+    }
+    .sheet-title { font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 16px; color: var(--text); }
+
+    .tier-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px; border-radius: 18px;
+      margin-bottom: 8px; border: 1px solid transparent;
+      transition: opacity 0.2s;
+    }
+    .tier-row.current {
+      background: rgba(214,58,54,0.1);
+      border-color: rgba(214,58,54,0.4);
+    }
+    .tier-row.earned {
+      background: rgba(53,210,111,0.05);
+      border-color: rgba(53,210,111,0.18);
+    }
+    .tier-row.future { opacity: 0.38; }
+
+    .t-icon { font-size: 28px; min-width: 36px; text-align: center; padding-top: 2px; }
+    .t-info { flex: 1; }
+    .t-name { font-size: 14px; font-weight: 900; margin-bottom: 5px; }
+    .tier-row.current .t-name { color: var(--red); }
+    .tier-row.earned  .t-name { color: var(--green); }
+    .tier-row.future  .t-name { color: var(--text-sec); }
+    .t-benefit { font-size: 12px; color: var(--text-sec); margin-bottom: 3px; line-height: 1.4; }
+    .t-check { font-size: 12px; font-weight: 700; color: var(--green); white-space: nowrap; padding-top: 3px; }
+    .t-current-label { font-size: 10px; color: var(--red); font-weight: 600; margin-top: 3px; }
+
+    .close-sheet-btn {
+      display: block; margin: 16px auto 0;
+      background: var(--red); border: none;
+      color: #fff; padding: 12px 36px;
+      border-radius: var(--btn-radius);
+      font-size: 14px; font-weight: 800;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(214,58,54,0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- ═════════ HOME SCREEN ═════════ -->
+    <div id="home" class="screen active">
+
+      <div class="topbar">
+        <div class="logo-wrap">
+          <div class="logo">HUMONDIAL</div>
+          <div class="logo-sub">2026 World Cup Game</div>
+        </div>
+        <div class="topbar-icon-btn">🔔</div>
+      </div>
+
+      <!-- Hero Card -->
+      <div class="hero-card">
+        <div class="hero-top">
+          <div>
+            <div class="hero-greeting">שלום, גל 👋</div>
+            <div class="hero-points">390 נ׳</div>
+            <div class="hero-points-label">נקודות שנצברו</div>
+          </div>
+          <div class="tier-badge-hero">🥉 ברונזה</div>
+        </div>
+
+        <div class="hero-progress">
+          <div class="hero-progress-labels">
+            <span>ברונזה</span>
+            <span>110 נ׳ לזהב</span>
+          </div>
+          <div class="hero-bar-bg">
+            <div class="hero-bar"></div>
+          </div>
+        </div>
+
+        <div class="hero-ctas">
+          <button class="btn-primary">⚽ נחש עכשיו</button>
+          <button class="btn-secondary">🍽️ שמור שולחן</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <div class="qa-tile">
+          <div class="qa-icon">⚽</div>
+          <div class="qa-label">ניחוש יומי</div>
+          <div class="qa-sub">3 פתוחים</div>
+        </div>
+        <div class="qa-tile">
+          <div class="qa-icon">🛵</div>
+          <div class="qa-label">הזמן משלוח</div>
+          <div class="qa-sub">+80 נ׳</div>
+        </div>
+        <div class="qa-tile">
+          <div class="qa-icon">🔥</div>
+          <div class="qa-label">משימות</div>
+          <div class="qa-sub">2 פעילות</div>
+        </div>
+      </div>
+
+      <!-- Stage filter -->
+      <div class="section-label">משחקים</div>
+      <div class="stage-filter">
+        <div class="stage-chip active">הכל</div>
+        <div class="stage-chip">שלב הקבוצות</div>
+        <div class="stage-chip">שמינית גמר</div>
+        <div class="stage-chip">רבע גמר</div>
+        <div class="stage-chip">חצי גמר</div>
+      </div>
+
+      <!-- Featured match -->
+      <div class="match-card featured">
+        <div class="featured-badge">🔥 כפול נקודות</div>
+        <div class="match-meta">
+          <span class="match-group">קבוצה A</span>
+          <span class="status-chip open">פתוח לניחוש</span>
+          <span class="match-time">היום 21:00</span>
+        </div>
+        <div class="match-teams">
+          <div class="team">
+            <div class="team-flag">🇧🇷</div>
+            <div class="team-name">ברזיל</div>
+          </div>
+          <div class="match-vs">VS</div>
+          <div class="team">
+            <div class="team-flag">🇦🇷</div>
+            <div class="team-name">ארגנטינה</div>
+          </div>
+        </div>
+        <div class="match-footer">
+          <div class="pts-badge">⭐ עד 60 נ׳</div>
+          <button class="predict-btn">נחש →</button>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-meta">
+          <span class="match-group">קבוצה B</span>
+          <span class="status-chip open">פתוח לניחוש</span>
+          <span class="match-time">מחר 18:00</span>
+        </div>
+        <div class="match-teams">
+          <div class="team">
+            <div class="team-flag">🇩🇪</div>
+            <div class="team-name">גרמניה</div>
+          </div>
+          <div class="match-vs">VS</div>
+          <div class="team">
+            <div class="team-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+            <div class="team-name">אנגליה</div>
+          </div>
+        </div>
+        <div class="match-footer">
+          <div class="pts-badge">⭐ עד 30 נ׳</div>
+          <button class="predict-btn">נחש →</button>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-meta">
+          <span class="match-group">קבוצה C</span>
+          <span class="status-chip locked">נעול</span>
+          <span class="match-time">20.7 22:00</span>
+        </div>
+        <div class="match-teams">
+          <div class="team">
+            <div class="team-flag">🇫🇷</div>
+            <div class="team-name">צרפת</div>
+          </div>
+          <div class="match-vs">VS</div>
+          <div class="team">
+            <div class="team-flag">🇵🇹</div>
+            <div class="team-name">פורטוגל</div>
+          </div>
+        </div>
+        <div class="match-footer">
+          <div class="pts-badge">⭐ עד 30 נ׳</div>
+          <div class="user-pick">✓ ניחשת: 2-1</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═════════ PERSONAL AREA ═════════ -->
+    <div id="personal" class="screen">
+
+      <div class="topbar">
+        <div class="logo-wrap">
+          <div class="logo">האיזור האישי</div>
+        </div>
+        <button class="back-btn" onclick="switchScreen('home')">← בחזרה</button>
+      </div>
+
+      <!-- Podium -->
+      <div class="section-label">מובילים</div>
+      <div class="podium-card">
+        <div class="podium">
+          <div class="podium-place second">
+            <div class="pod-avatar">🐺</div>
+            <div class="pod-name">יוסי מ׳</div>
+            <div class="pod-pts">840 נ׳</div>
+            <div class="pod-stand">2</div>
+          </div>
+          <div class="podium-place first">
+            <div class="pod-crown">👑</div>
+            <div class="pod-avatar">🦁</div>
+            <div class="pod-name">דני א׳</div>
+            <div class="pod-pts">1,240 נ׳</div>
+            <div class="pod-stand">1</div>
+          </div>
+          <div class="podium-place third">
+            <div class="pod-avatar">🦊</div>
+            <div class="pod-name">ליאור כ׳</div>
+            <div class="pod-pts">710 נ׳</div>
+            <div class="pod-stand">3</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-name">משה ג׳</div><div class="lb-pts">680</div></div>
+        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-name">רוני ש׳</div><div class="lb-pts">610</div></div>
+        <div class="lb-row"><div class="lb-rank">6</div><div class="lb-name">אבי ל׳</div><div class="lb-pts">580</div></div>
+        <div class="lb-row"><div class="lb-rank">7</div><div class="lb-name">נדב פ׳</div><div class="lb-pts">540</div></div>
+        <div class="lb-row"><div class="lb-rank">8</div><div class="lb-name">עידן מ׳</div><div class="lb-pts">510</div></div>
+      </div>
+
+      <!-- My Position -->
+      <div class="section-label">המיקום שלי</div>
+      <div class="my-pos-card">
+        <div class="my-pos-row">
+          <div class="my-rank">#12</div>
+          <div>
+            <div class="my-name">גל ת׳</div>
+            <div class="my-pts-label">390 נקודות</div>
+            <button class="tier-badge-btn" onclick="openSheet()">🥉 ברונזה ▾</button>
+          </div>
+        </div>
+        <div class="score-row">
+          <span class="score-now">390</span>
+          <span class="score-arrow">→</span>
+          <span class="score-proj">(~820 נ׳)</span>
+        </div>
+        <div class="prog-labels">
+          <span>ברונזה</span>
+          <span>110 נ׳ לזהב</span>
+        </div>
+        <div class="prog-bg">
+          <div class="prog-fill"></div>
+          <div class="prog-dotted"></div>
+        </div>
+        <div class="prog-note">צפי: רמת זהב עד 19.7.26 🏆</div>
+      </div>
+
+      <!-- Trajectory -->
+      <div class="section-label">הצפי שלי</div>
+      <div class="traj-card">
+        <div class="traj-row">
+          <div>
+            <div class="traj-label">צפי סיום (19.7.26)</div>
+            <div class="traj-sub">בקצב הנוכחי</div>
+          </div>
+          <div class="traj-value">~820 נ׳</div>
+        </div>
+      </div>
+
+      <!-- What-if sliders -->
+      <div class="section-label">מה אם...</div>
+      <div class="whatif-outer">
+
+        <div class="wi-card" data-rate="30" data-type="predict" data-max="20">
+          <div class="wi-title">אם אנחש נכון עוד <span>4</span> משחקים</div>
+          <div class="wi-score-row">
+            <span class="wi-score-base">ניקוד אפשרי:</span>
+            <span class="wi-score-now">390</span>
+            <span class="wi-score-sep">→</span>
+            <span class="wi-score-proj">510 נ׳</span>
+          </div>
+          <div class="wi-slider-row">
+            <div class="wi-icon">⚽</div>
+            <input type="range" class="wi-slider" min="0" max="20" value="4">
+          </div>
+        </div>
+
+        <div class="wi-card" data-rate="120" data-type="table" data-max="10">
+          <div class="wi-title">אם אזמין שולחן עוד <span>3</span> פעמים</div>
+          <div class="wi-score-row">
+            <span class="wi-score-base">ניקוד אפשרי:</span>
+            <span class="wi-score-now">390</span>
+            <span class="wi-score-sep">→</span>
+            <span class="wi-score-proj">750 נ׳</span>
+          </div>
+          <div class="wi-slider-row">
+            <div class="wi-icon">🍽️</div>
+            <input type="range" class="wi-slider" min="0" max="10" value="3">
+          </div>
+        </div>
+
+        <div class="wi-card" data-rate="80" data-type="delivery" data-max="10">
+          <div class="wi-title">אם אזמין משלוח עוד <span>2</span> פעמים</div>
+          <div class="wi-score-row">
+            <span class="wi-score-base">ניקוד אפשרי:</span>
+            <span class="wi-score-now">390</span>
+            <span class="wi-score-sep">→</span>
+            <span class="wi-score-proj">550 נ׳</span>
+          </div>
+          <div class="wi-slider-row">
+            <div class="wi-icon">🛵</div>
+            <input type="range" class="wi-slider" min="0" max="10" value="2">
+          </div>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="section-label">פעולות</div>
+      <div class="cta-block">
+        <button class="cta-btn primary" id="cta-predict">⚽ לניחושים →</button>
+        <button class="cta-btn secondary" id="cta-table">🍽️ הזמן שולחן ↗</button>
+        <button class="cta-btn secondary" id="cta-delivery">🛵 הזמן משלוח ↗</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
+      <span class="nav-icon">🏠</span><span>בית</span>
+    </button>
+    <button class="nav-item" id="nav-personal" onclick="switchScreen('personal')">
+      <span class="nav-icon">👤</span><span>האיזור האישי</span>
+    </button>
+  </div>
+
+  <!-- Benefits Sheet -->
+  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+  <div class="benefits-sheet" id="benefits-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">🏆 רמות השחקן</div>
+
+    <!-- Legend (future) -->
+    <div class="tier-row future">
+      <div class="t-icon">👑</div>
+      <div class="t-info">
+        <div class="t-name">אגדה</div>
+        <div class="t-benefit">🎁 ארוחה זוגית חינם</div>
+        <div class="t-benefit">🎟️ כניסה לאירוע הגמר</div>
+        <div class="t-benefit">⚡ כפל נקודות בכל המשחקים</div>
+      </div>
+    </div>
+
+    <!-- Gold (future) -->
+    <div class="tier-row future">
+      <div class="t-icon">🥇</div>
+      <div class="t-info">
+        <div class="t-name">זהב</div>
+        <div class="t-benefit">🍕 20% הנחה על משלוחים</div>
+        <div class="t-benefit">📅 עדיפות בהזמנת שולחן</div>
+      </div>
+    </div>
+
+    <!-- Bronze (current) -->
+    <div class="tier-row current">
+      <div class="t-icon">🥉</div>
+      <div class="t-info">
+        <div class="t-name">ברונזה</div>
+        <div class="t-current-label">✦ הרמה הנוכחית שלך</div>
+        <div class="t-benefit">☕ קפה חינם עם הזמנה</div>
+        <div class="t-benefit">🎯 גישה לניחושים מיוחדים</div>
+      </div>
+    </div>
+
+    <!-- Silver (earned) -->
+    <div class="tier-row earned">
+      <div class="t-icon">🥈</div>
+      <div class="t-info">
+        <div class="t-name">כסף</div>
+        <div class="t-benefit">🎫 כרטיס צפייה חינם</div>
+      </div>
+      <div class="t-check">✓ נצבר</div>
+    </div>
+
+    <button class="close-sheet-btn" onclick="closeSheet()">סגור</button>
+  </div>
+
+  <script>
+    const BASE = 390;
+
+    function switchScreen(s) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(s).classList.add('active');
+      document.getElementById('nav-' + s).classList.add('active');
+    }
+
+    function openSheet() {
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('benefits-sheet').classList.add('open');
+    }
+    function closeSheet() {
+      document.getElementById('overlay').classList.remove('open');
+      document.getElementById('benefits-sheet').classList.remove('open');
+    }
+
+    const CTA_MAP = { predict: 'cta-predict', table: 'cta-table', delivery: 'cta-delivery' };
+
+    function resetCtas(exceptType) {
+      Object.entries(CTA_MAP).forEach(([t, id]) => {
+        if (t === exceptType) return;
+        const btn = document.getElementById(id);
+        btn.classList.remove('lit');
+        btn.style.cssText = '';
+      });
+    }
+
+    document.querySelectorAll('.wi-card').forEach(card => {
+      const slider = card.querySelector('.wi-slider');
+      const titleSpan = card.querySelector('.wi-title span');
+      const scoreNow = card.querySelector('.wi-score-now');
+      const scoreProj = card.querySelector('.wi-score-proj');
+      const rate = parseInt(card.dataset.rate);
+      const type = card.dataset.type;
+      const max = parseInt(card.dataset.max);
+
+      slider.addEventListener('input', () => {
+        const v = parseInt(slider.value);
+        titleSpan.textContent = v;
+        scoreNow.textContent = BASE;
+        scoreProj.textContent = (BASE + v * rate) + ' נ׳';
+        const pct = v / max * 100;
+        slider.style.background = `linear-gradient(to left, #D63A36 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`;
+
+        resetCtas(type);
+        const activeCta = document.getElementById(CTA_MAP[type]);
+        if (activeCta) activeCta.classList.add('lit');
+      });
+    });
+
+    // Stage filter chips
+    document.querySelectorAll('.stage-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.closest('.stage-filter').querySelectorAll('.stage-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
